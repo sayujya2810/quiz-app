@@ -6,7 +6,7 @@ module.exports.loginValidator = (data) => {
     const errors ={}
 
     data.email = !(isEmpty(data.email)) ? data.email : '';
-    data.password = !(isEmpty(data.passsword)) ? data.password : '';
+    data.password = !(isEmpty(data.password)) ? data.password : '';
     
     let emailError = validator.isEmpty(data.email) ? 'Email is Required' : (!validator.isEmail(data.email) ? 'Please provide a valid email' : '' ); 
     let passwordError = validator.isEmpty(data.password) ? 'Password is required' : "";

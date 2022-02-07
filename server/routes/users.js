@@ -9,6 +9,42 @@ const bodyParser = require('body-parser')
 
 const router = express.Router()
 
+router.post('/login', (req,res) => {
+    const { errors, isValid } = loginValidator(req.body);
+    if(!isValid){
+        res.json({"success": false, errors})
+    }
+    else{
+        Users.findOne({email: req.body.email}).then( user => {
+            if(!user){
+                res.json({message : "Email not found" , "success" : false});
+            } else{
+                bcrypt.compare(req.body.password, user.password).then(success => {
+                    if(!success){
+                        res.json({message: 'Invalid Password', "success" : false})
+                    } else{
+                        const payload = {
+                            id: user._id,
+                            name: user.firstName
+                        }
+                        jwt.sign(
+                            payload,
+                            process.env.APP_SECRET , {expiresIn: 2155926},
+                            (err, token) => {
+                                res.json({
+                                    user,
+                                    token: 'Bearer Token: ' + token,
+                                    "success": true
+                                })
+                            }
+                        )
+                    }
+                })
+            }
+        })
+    }
+})
+
 router.post('/register', (req,res) => {
     const {errors, isValid} = registerValidator(req.body);
     if(!isValid){
